@@ -1,5 +1,8 @@
 pipeline {
   agent any
+  tools {
+    nodejs "Node18"
+  }
 
   environment {
     IMAGE = "yousufuddin/jenkins-for-ci-cd"
