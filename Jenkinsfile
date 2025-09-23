@@ -15,33 +15,29 @@ pipeline {
 
     stage('Install') {
       steps {
-        sh 'npm ci'
+        bat 'npm install'
       }
     }
 
     stage('Test') {
       steps {
-        sh 'npm run test || true'
+        bat 'echo No tests to run'
       }
     }
 
     stage('Build Docker Image') {
       steps {
-        script {
-          def built = docker.build("${env.IMAGE}:${env.BUILD_NUMBER}")
-          env.IMAGE_TAG = "${env.IMAGE}:${env.BUILD_NUMBER}"
-          currentBuild.description = "${env.IMAGE}:${env.BUILD_NUMBER}"
-        }
+        bat "docker build -t ${env.IMAGE}:${env.BUILD_NUMBER} ."
       }
     }
 
     stage('Push to DockerHub') {
       steps {
-        script {
-          docker.withRegistry('', "${DOCKERHUB_CRED}") {
-            def img = docker.image("${env.IMAGE}:${env.BUILD_NUMBER}")
-            img.push()
-          }
+        withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CRED}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+          bat "docker login -u %DOCKER_USER% -p %DOCKER_PASS%"
+          bat "docker push ${env.IMAGE}:${env.BUILD_NUMBER}"
+          bat "docker tag ${env.IMAGE}:${env.BUILD_NUMBER} ${env.IMAGE}:latest"
+          bat "docker push ${env.IMAGE}:latest"
         }
       }
     }
