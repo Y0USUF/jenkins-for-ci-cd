@@ -6,7 +6,7 @@ pipeline {
 
   environment {
     IMAGE = "yousufuddin/jenkins-for-ci-cd"
-    DOCKERHUB_CRED = "Dockerhub-creds"  
+    DOCKERHUB_CRED = "Dockerhub-cred"  
   }
 
   stages {
