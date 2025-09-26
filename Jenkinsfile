@@ -49,6 +49,7 @@ pipeline {
   post {
     always {
       echo "Pipeline finished. Docker image pushed: ${env.IMAGE}:${env.BUILD_NUMBER}"
+      echo "This the build branch on git"
     }
   }
 }
